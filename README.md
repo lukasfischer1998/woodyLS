@@ -1,16 +1,15 @@
 ![Bash Script](https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
 
-# Enhanced Tree Command 🌳
+# WoodyLS aka. Enhanced Tree Command 🌳
 
-This was actually just a learning project for me, but I now use the command regularly.
-A colorful, feature-rich alternative to the standard `tree` command with icons. Verison: 1.0.0
+This was actually just a learning project for me, but I now use the command regularly. It's just my version of the `tree` command with a few less options so far but with icons. Verison: 1.0.0
 
 ![Example Output](showcase.png)
 
 ## Features ✨
 
-**Visual Enhancements**
+**Visuals**
 - 🎨 Color-coded output (directories, files, symlinks)
 - 🏷️ 50+ file type icons
 
@@ -18,19 +17,13 @@ A colorful, feature-rich alternative to the standard `tree` command with icons. 
 - 🔍 Recursive directory listing (`-r` option)
 - 👁️ Hidden file visibility (`-a` option)
 - 🔗 Symlink detection with target paths
-- ⚡ Fast execution (pure Bash)
-
-**Customization**
-- 🛠️ Configurable color schemes
-- 🖌️ Custom icon sets
-- 🏗️ Modular design for easy extension
 
 ## Installation 📦
 
 ### Method: Quick Install (with alias)
 ```bash
 # Clone repository
-git clone https://github.com/lukasfischer1998/tree-command.git ~/.tree-command
+git clone https://github.com/lukasfischer1998/woodyLS.git ~/.tree-command
 
 # Make executable
 chmod +x ~/.tree-command/bin/treeLS.sh
@@ -68,9 +61,9 @@ tree [OPTIONS]
 
 ## Built With 🛠️
 
-- **Bash 5.0+** - For maximum compatibility
-- **Unicode 13** - Emoji and icon support
-- **ANSI Colors** - 256-color support
+- **Bash 5.0+**
+- **Unicode 13**
+- **ANSI Colors**
 
 
 ## License 📜
