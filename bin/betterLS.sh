@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Version Info
-VERSION="1.0.0"
+VERSION="1.1.0"
 AUTHOR="Lukas Fischer"
 RELEASE_DATE="2023-11-20"
 
@@ -84,7 +84,9 @@ pretty_tree() {
         name=$(basename "$entry")
         if [[ ! $name =~ ^($ignore_dirs)$ ]] && [[ "$name" != "*" ]]; then
             is_empty=0
-            entries+=("$entry")
+            if [ "$DIRS_ONLY" -eq 0 ] || [ -d "$entry" ]; then
+                entries+=("$entry")
+            fi
         fi
     done
 
@@ -113,7 +115,9 @@ pretty_tree() {
                 for sub_entry in "$entry"/*; do
                     sub_name=$(basename "$sub_entry")
                     if [[ ! $sub_name =~ ^($ignore_dirs)$ ]] && [[ "$sub_name" != "*" ]]; then
-                        sub_entries+=("$sub_entry")
+                        if [ "$DIRS_ONLY" -eq 0 ] || [ -d "$sub_entry" ]; then
+                            sub_entries+=("$sub_entry")
+                        fi
                     fi
                 done
                 if [ ${#sub_entries[@]} -gt 0 ]; then
@@ -121,30 +125,32 @@ pretty_tree() {
                     pretty_tree "$entry" $((depth - 1)) "$new_prefix"
                 fi
             fi
-        elif [ -L "$entry" ]; then
-            # Symbolic link - cyan
-            color=${COLORS[symlink]}
-            target=$(readlink "$entry")
-            icon="🔗"
-            echo -e "$icon \e[${color}m$name → $target\e[0m"
-        elif [ -x "$entry" ]; then
-            # Executable file - green
-            color=${COLORS[exec]}
-            ext=".${name##*.}"
-            icon=${FILE_ICONS["$ext"]:-📄}
-            echo -e "$icon \e[${color}m$name\e[0m"
-        elif [[ "$name" =~ ^\. ]]; then
-            # Hidden file - grey
-            color=${COLORS[hidden]}
-            ext=".${name##*.}"
-            icon=${FILE_ICONS["$ext"]:-📄}
-            echo -e "$icon \e[${color}m$name\e[0m"
-        else
-            # Normal file - yellow
-            color=${COLORS[file]}
-            ext=".${name##*.}"
-            icon=${FILE_ICONS["$ext"]:-📄}
-            echo -e "$icon \e[${color}m$name\e[0m"
+        elif [ "$DIRS_ONLY" -eq 0 ]; then # Only show files if not in dirs-only mode
+            if [ -L "$entry" ]; then
+                # Symbolic link - cyan
+                color=${COLORS[symlink]}
+                target=$(readlink "$entry")
+                icon="🔗"
+                echo -e "$icon \e[${color}m$name → $target\e[0m"
+            elif [ -x "$entry" ]; then
+                # Executable file - green
+                color=${COLORS[exec]}
+                ext=".${name##*.}"
+                icon=${FILE_ICONS["$ext"]:-📄}
+                echo -e "$icon \e[${color}m$name\e[0m"
+            elif [[ "$name" =~ ^\. ]]; then
+                # Hidden file - grey
+                color=${COLORS[hidden]}
+                ext=".${name##*.}"
+                icon=${FILE_ICONS["$ext"]:-📄}
+                echo -e "$icon \e[${color}m$name\e[0m"
+            else
+                # Normal file - yellow
+                color=${COLORS[file]}
+                ext=".${name##*.}"
+                icon=${FILE_ICONS["$ext"]:-📄}
+                echo -e "$icon \e[${color}m$name\e[0m"
+            fi
         fi
     done
 
@@ -155,9 +161,11 @@ show_help() {
     echo "Usage: tree [OPTIONS]"
     echo "  -r, --recursive    Show recursive directory tree"
     echo "  -a, --all          Show hidden files"
+    echo "  -d, --dirs-only    Show directories only"
+    echo "  -rd, -dr           Show recursive directories only"
     echo "  -ra, -ar           Show recursive with hidden files"
     echo "  -v, --version      Show version information"
-    echo "  -h, --help         Show this help"
+    echo "  -h, --help         Show help message"
     exit 0
 }
 
@@ -171,11 +179,23 @@ show_version() {
 # Parameter processing
 SHOW_HIDDEN=0
 RECURSIVE_DEPTH=1
+DIRS_ONLY=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-    -r | --recursive) RECURSIVE_DEPTH=999 ;;
-    -a | --all) SHOW_HIDDEN=1 ;;
+    -r | --recursive)
+        RECURSIVE_DEPTH=999
+        ;;
+    -a | --all)
+        SHOW_HIDDEN=1
+        ;;
+    -d | --dirs-only)
+        DIRS_ONLY=1
+        ;;
+    -rd | -dr)
+        RECURSIVE_DEPTH=999
+        DIRS_ONLY=1
+        ;;
     -ra | -ar)
         SHOW_HIDDEN=1
         RECURSIVE_DEPTH=999
