@@ -3,6 +3,7 @@
 
 # Enhanced Tree Command 🌳
 
+This was actually just a learning project for me, but I now use the command regularly.
 A colorful, feature-rich alternative to the standard `tree` command with icons. Verison: 1.0.0
 
 ![Example Output](showcase.png)
