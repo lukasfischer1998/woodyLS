@@ -27,15 +27,23 @@ A colorful, feature-rich alternative to the standard `tree` command with icons. 
 
 ## Installation 📦
 
+### Method: Quick Install (with alias)
 ```bash
-# Clone the repository
-git clone https://github.com/lukasfischer1998/tree-command.git
+# Clone repository
+git clone https://github.com/lukasfischer1998/tree-command.git ~/.tree-command
 
-# Make the script executable
-chmod +x bin/tree
+# Make executable
+chmod +x ~/.tree-command/bin/treeLS.sh
 
-# Add to PATH (optional)
-export PATH=$PATH:$(pwd)/bin
+# Add to shell config (choose one):
+echo 'alias tree="~/.tree-command/bin/treeLS.sh"' >> ~/.bashrc  # Bash
+echo 'alias tree="~/.tree-command/bin/treeLS.sh"' >> ~/.zshrc   # Zsh
+
+# Reload shell
+source ~/.bashrc  # or source ~/.zshrc
+
+# Check Install
+tree --version
 ```
 
 ## Usage 🛠️
