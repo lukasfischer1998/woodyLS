@@ -26,11 +26,11 @@ This was actually just a learning project for me, but I now use the command regu
 git clone https://github.com/lukasfischer1998/woodyLS.git ~/.tree-command
 
 # Make executable
-chmod +x ~/.tree-command/bin/treeLS.sh
+chmod +x ~/.tree-command/bin/woodyLS.sh
 
 # Add to shell config (choose one):
-echo 'alias tree="~/.tree-command/bin/treeLS.sh"' >> ~/.bashrc  # Bash
-echo 'alias tree="~/.tree-command/bin/treeLS.sh"' >> ~/.zshrc   # Zsh
+echo 'alias tree="~/.tree-command/bin/woodyLS.sh"' >> ~/.bashrc  # Bash
+echo 'alias tree="~/.tree-command/bin/woodyLS.sh"' >> ~/.zshrc   # Zsh
 
 # Reload shell
 source ~/.bashrc  # or source ~/.zshrc
