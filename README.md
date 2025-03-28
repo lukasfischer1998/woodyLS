@@ -42,11 +42,14 @@ export PATH=$PATH:$(pwd)/bin
 
 ```bash
 tree [OPTIONS]
--r, --recursive  Show recursive directory tree
--a, --all        Show hidden files
--ra, -ar         Show recursive with hidden files
--v, --version    Show version information
--h, --help       Show help message
+-r, --recursive         Show recursive directory tree
+-a, --all               Show hidden files
+-d, --dirs-only         Show directories only
+-i, --include-ignored   Show normally ignored directories ( node_modules etc.)
+-rd, -dr                Show recursive directories only
+-ra, -ar                Show recursive with hidden files
+-v, --version           Show version information
+-h, --help              Show help message
 ```
 
 ## Contributing 🤝
