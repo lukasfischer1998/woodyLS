@@ -1,6 +1,5 @@
-![GitHub release](https://img.shields.io/github/v/release/lukasfischer1998/tree-command)
-![License](https://img.shields.io/github/license/lukasfischer1998/tree-command)
 ![Shell Script](https://img.shields.io/badge/Shell_Script-%23121011.svg?logo=gnu-bash&logoColor=white)
+![License](https://img.shields.io/github/license/lukasfischer1998/tree-command)
 
 # Enhanced Tree Command 🌳
 
