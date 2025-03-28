@@ -82,7 +82,7 @@ pretty_tree() {
     local is_empty=1
     for entry in "$dir"/*; do
         name=$(basename "$entry")
-        if [[ ! $name =~ ^($ignore_dirs)$ ]] && [[ "$name" != "*" ]]; then
+        if [[ "$SHOW_IGNORED" -eq 1 || ! $name =~ ^($ignore_dirs)$ ]] && [[ "$name" != "*" ]]; then
             is_empty=0
             if [ "$DIRS_ONLY" -eq 0 ] || [ -d "$entry" ]; then
                 entries+=("$entry")
@@ -159,13 +159,14 @@ pretty_tree() {
 
 show_help() {
     echo "Usage: tree [OPTIONS]"
-    echo "  -r, --recursive    Show recursive directory tree"
-    echo "  -a, --all          Show hidden files"
-    echo "  -d, --dirs-only    Show directories only"
-    echo "  -rd, -dr           Show recursive directories only"
-    echo "  -ra, -ar           Show recursive with hidden files"
-    echo "  -v, --version      Show version information"
-    echo "  -h, --help         Show help message"
+    echo "  -r, --recursive       Show recursive directory tree"
+    echo "  -a, --all             Show hidden files"
+    echo "  -d, --dirs-only       Show directories only"
+    echo "  -i, --include-ignored Show normally ignored directories (.git, node_modules etc.)"
+    echo "  -rd, -dr              Show recursive directories only"
+    echo "  -ra, -ar              Show recursive with hidden files"
+    echo "  -v, --version         Show version information"
+    echo "  -h, --help            Show help message"
     exit 0
 }
 
@@ -180,6 +181,7 @@ show_version() {
 SHOW_HIDDEN=0
 RECURSIVE_DEPTH=1
 DIRS_ONLY=0
+SHOW_IGNORED=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -191,6 +193,9 @@ while [[ $# -gt 0 ]]; do
         ;;
     -d | --dirs-only)
         DIRS_ONLY=1
+        ;;
+    -i | --include-ignored)
+        SHOW_IGNORED=1
         ;;
     -rd | -dr)
         RECURSIVE_DEPTH=999
