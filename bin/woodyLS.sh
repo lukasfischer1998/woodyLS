@@ -165,6 +165,7 @@ show_help() {
     echo "  -i, --include-ignored Show normally ignored directories (.git, node_modules etc.)"
     echo "  -rd, -dr              Show recursive directories only"
     echo "  -ra, -ar              Show recursive with hidden files"
+    echo "  -rdep, --re-depth N   Set custom recursion depth (e.g., '--re-depth 2')"
     echo "  -v, --version         Show version information"
     echo "  -h, --help            Show help message"
     exit 0
@@ -210,6 +211,14 @@ while [[ $# -gt 0 ]]; do
         ;;
     -h | --help)
         show_help
+        ;;
+    -rdep | --re-depth)
+        if [[ -z "$2" || ! "$2" =~ ^[0-9]+$ || "$2" -le 0 ]]; then
+            echo "Error: '$1' requires a positive integer (e.g., '--re-depth 3')"
+            exit 1
+        fi
+        RECURSIVE_DEPTH="$2"
+        shift
         ;;
     *)
         echo "Error: Unknown option '$1'"
