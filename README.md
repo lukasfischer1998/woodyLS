@@ -17,6 +17,7 @@ This was actually just a learning project for me, but I now use the command regu
 - 🔍 Recursive directory listing (`-r` option)
 - 👁️ Hidden file visibility (`-a` option)
 - 🔗 Symlink detection with target paths
+-    Set custom recursion depth
 
 ## Installation 📦
 
