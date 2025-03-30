@@ -51,6 +51,7 @@ tree [OPTIONS]
 -rd, -dr                Show recursive directories only
 -ra, -ar                Show recursive with hidden files
 -rdep, --re-depth       Set custom recursion depth ('--re-depth 2')
+-f, --filter EXT        Filter files by extension ('--filter=.txt')
 -v, --version           Show version information
 -h, --help              Show help message
 ```

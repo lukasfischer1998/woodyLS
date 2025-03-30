@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Version Info
-VERSION="1.1.0"
+VERSION="1.0.0"
 AUTHOR="Lukas Fischer"
 RELEASE_DATE="2023-11-20"
 
@@ -53,6 +53,20 @@ declare -A COLORS=(
     [exec]="1;32"    # Green
 )
 
+# Filter function
+should_include_file() {
+    local filename="$1"
+
+    if [ -z "$FILTER_EXT" ]; then
+        return 0
+    fi
+    if [[ "$filename" == *"$FILTER_EXT" ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
 # Sorting function
 sort_entries() {
     local entries=("$@")
@@ -62,7 +76,9 @@ sort_entries() {
         if [ -d "$entry" ]; then
             dirs+=("$entry")
         else
-            files+=("$entry")
+            if should_include_file "$entry"; then
+                files+=("$entry")
+            fi
         fi
     done
 
@@ -126,30 +142,32 @@ pretty_tree() {
                 fi
             fi
         elif [ "$DIRS_ONLY" -eq 0 ]; then # Only show files if not in dirs-only mode
-            if [ -L "$entry" ]; then
-                # Symbolic link - cyan
-                color=${COLORS[symlink]}
-                target=$(readlink "$entry")
-                icon="🔗"
-                echo -e "$icon \e[${color}m$name → $target\e[0m"
-            elif [ -x "$entry" ]; then
-                # Executable file - green
-                color=${COLORS[exec]}
-                ext=".${name##*.}"
-                icon=${FILE_ICONS["$ext"]:-📄}
-                echo -e "$icon \e[${color}m$name\e[0m"
-            elif [[ "$name" =~ ^\. ]]; then
-                # Hidden file - grey
-                color=${COLORS[hidden]}
-                ext=".${name##*.}"
-                icon=${FILE_ICONS["$ext"]:-📄}
-                echo -e "$icon \e[${color}m$name\e[0m"
-            else
-                # Normal file - yellow
-                color=${COLORS[file]}
-                ext=".${name##*.}"
-                icon=${FILE_ICONS["$ext"]:-📄}
-                echo -e "$icon \e[${color}m$name\e[0m"
+            if should_include_file "$entry"; then
+                if [ -L "$entry" ]; then
+                    # Symbolic link - cyan
+                    color=${COLORS[symlink]}
+                    target=$(readlink "$entry")
+                    icon="🔗"
+                    echo -e "$icon \e[${color}m$name → $target\e[0m"
+                elif [ -x "$entry" ]; then
+                    # Executable file - green
+                    color=${COLORS[exec]}
+                    ext=".${name##*.}"
+                    icon=${FILE_ICONS["$ext"]:-📄}
+                    echo -e "$icon \e[${color}m$name\e[0m"
+                elif [[ "$name" =~ ^\. ]]; then
+                    # Hidden file - grey
+                    color=${COLORS[hidden]}
+                    ext=".${name##*.}"
+                    icon=${FILE_ICONS["$ext"]:-📄}
+                    echo -e "$icon \e[${color}m$name\e[0m"
+                else
+                    # Normal file - yellow
+                    color=${COLORS[file]}
+                    ext=".${name##*.}"
+                    icon=${FILE_ICONS["$ext"]:-📄}
+                    echo -e "$icon \e[${color}m$name\e[0m"
+                fi
             fi
         fi
     done
@@ -166,6 +184,7 @@ show_help() {
     echo "  -rd, -dr              Show recursive directories only"
     echo "  -ra, -ar              Show recursive with hidden files"
     echo "  -rdep, --re-depth N   Set custom recursion depth (e.g., '--re-depth 2')"
+    echo "  -f, --filter EXT      Filter files by extension (e.g., '--filter=.txt')"
     echo "  -v, --version         Show version information"
     echo "  -h, --help            Show help message"
     exit 0
@@ -183,6 +202,7 @@ SHOW_HIDDEN=0
 RECURSIVE_DEPTH=1
 DIRS_ONLY=0
 SHOW_IGNORED=0
+FILTER_EXT=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -220,6 +240,17 @@ while [[ $# -gt 0 ]]; do
         RECURSIVE_DEPTH="$2"
         shift
         ;;
+    -f | --filter)
+        if [[ -z "$2" ]]; then
+            echo "Error: '$1' requires an extension (e.g., '--filter .txt' or '--filter=.txt')"
+            exit 1
+        fi
+        FILTER_EXT="${2#=}"
+        shift
+        ;;
+    -f=* | --filter=*)
+        FILTER_EXT="${1#*=}"
+        ;;
     *)
         echo "Error: Unknown option '$1'"
         echo "Try 'tree --help' for more information"
@@ -229,4 +260,4 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-pretty_tree "$(pwd)" "$RECURSIVE_DEPTH"
+pretty_tree "$(pwd)" "$RECURSIVE_DEPTH" ""
