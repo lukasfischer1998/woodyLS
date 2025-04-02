@@ -1,92 +1,8 @@
 #!/bin/bash
 
-# Version Info
-VERSION="1.0.0"
-AUTHOR="Lukas Fischer"
-RELEASE_DATE="2023-11-20"
-
-declare -A FILE_ICONS=(
-    # Text
-    [".txt"]="📄" [".md"]="📖" [".pdf"]="📕" [".doc"]="📃" [".docx"]="📃"
-    [".odt"]="📑" [".rtf"]="📝" [".tex"]="✍️" [".csv"]="📊" [".xls"]="📊"
-    [".xlsx"]="📊" [".ods"]="📊"
-
-    # Pictures
-    [".jpg"]="🖼️" [".jpeg"]="🖼️" [".png"]="🖼️" [".gif"]="🖼️" [".svg"]="🖼️"
-    [".bmp"]="🖼️" [".tiff"]="🖼️" [".webp"]="🖼️" [".ico"]="🖼️" [".psd"]="🎨"
-
-    # Audio/Video
-    [".mp3"]="🎵" [".wav"]="🎵" [".ogg"]="🎵" [".flac"]="🎵" [".aac"]="🎵"
-    [".mp4"]="🎬" [".avi"]="🎬" [".mov"]="🎬" [".mkv"]="🎬" [".flv"]="🎬"
-    [".webm"]="🎬"
-
-    # Code
-    [".sh"]="💻" [".bash"]="💻" [".zsh"]="💻" [".js"]="📜" [".ts"]="📜"
-    [".py"]="🐍" [".java"]="☕" [".c"]="🔧" [".cpp"]="🔧" [".h"]="🔧"
-    [".go"]="🐹" [".rb"]="💎" [".php"]="🐘" [".swift"]="🐦" [".kt"]="🅱️"
-    [".rs"]="🦀" [".lua"]="🌙" [".pl"]="🐪" [".sql"]="🗃️" [".hs"]="λ"
-
-    # Web
-    [".html"]="🌐" [".htm"]="🌐" [".css"]="🎨" [".scss"]="🎨" [".sass"]="🎨"
-    [".less"]="🎨" [".json"]="🔣" [".xml"]="📋" [".yml"]="🔣" [".yaml"]="🔣"
-    [".toml"]="🔣"
-
-    # Archive
-    [".zip"]="🗜️" [".tar"]="🗜️" [".gz"]="🗜️" [".bz2"]="🗜️" [".7z"]="🗜️"
-    [".rar"]="🗜️" [".xz"]="🗜️" [".deb"]="📦" [".rpm"]="📦" [".pkg"]="📦"
-
-    # System/Config
-    [".conf"]="⚙️" [".cfg"]="⚙️" [".ini"]="⚙️" [".log"]="📋" [".lock"]="🔒"
-    [".bak"]="🔙" [".tmp"]="🕒" [".env"]="🌱" [".gitignore"]="🚫"
-
-    # Others
-    [".exe"]="⚙️" [".dll"]="🔧" [".app"]="🖥️" [".apk"]="📱" [".iso"]="💿"
-    [".img"]="💾" [".dmg"]="🍏" [".ps1"]="💻" [".vbs"]="💻"
-)
-
-# Color definitions
-declare -A COLORS=(
-    [dir]="1;34"     # Blue
-    [file]="0;33"    # Yellow
-    [hidden]="0;37"  # Grey
-    [symlink]="1;36" # Cyan
-    [exec]="1;32"    # Green
-)
-
-# Filter function
-should_include_file() {
-    local filename="$1"
-
-    if [ -z "$FILTER_EXT" ]; then
-        return 0
-    fi
-    if [[ "$filename" == *"$FILTER_EXT" ]]; then
-        return 0
-    fi
-
-    return 1
-}
-
-# Sorting function
-sort_entries() {
-    local entries=("$@")
-    local dirs=() files=()
-
-    for entry in "${entries[@]}"; do
-        if [ -d "$entry" ]; then
-            dirs+=("$entry")
-        else
-            if should_include_file "$entry"; then
-                files+=("$entry")
-            fi
-        fi
-    done
-
-    dirs=($(printf "%s\n" "${dirs[@]}" | sort))
-    files=($(printf "%s\n" "${files[@]}" | sort))
-
-    echo "${dirs[@]}" "${files[@]}"
-}
+source "$(dirname "$0")/command_info.sh"
+source "$(dirname "$0")/command_asset.sh"
+source "$(dirname "$0")/command_helpers.sh"
 
 pretty_tree() {
     local dir="${1:-.}" depth="${2:-1}" prefix="${3:-}"
@@ -173,28 +89,6 @@ pretty_tree() {
     done
 
     shopt -u dotglob 2>/dev/null
-}
-
-show_help() {
-    echo "Usage: tree [OPTIONS]"
-    echo "  -r, --recursive       Show recursive directory tree"
-    echo "  -a, --all             Show hidden files"
-    echo "  -d, --dirs-only       Show directories only"
-    echo "  -i, --include-ignored Show normally ignored directories (.git, node_modules etc.)"
-    echo "  -rd, -dr              Show recursive directories only"
-    echo "  -ra, -ar              Show recursive with hidden files"
-    echo "  -rdep, --re-depth N   Set custom recursion depth (e.g., '--re-depth 2')"
-    echo "  -f, --filter EXT      Filter files by extension (e.g., '--filter=.txt')"
-    echo "  -v, --version         Show version information"
-    echo "  -h, --help            Show help message"
-    exit 0
-}
-
-show_version() {
-    echo "tree (enhanced) v$VERSION"
-    echo "Copyright (c) $RELEASE_DATE $AUTHOR"
-    echo "License: MIT"
-    exit 0
 }
 
 # Parameter processing
