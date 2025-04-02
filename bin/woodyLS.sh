@@ -30,6 +30,10 @@ pretty_tree() {
         name=$(basename "$entry")
         is_last=$((i == entries_count))
 
+        if [ -d "$entry" ] && [ -n "$FILTER_EXT" ] && ! has_matching_files "$entry"; then
+            continue
+        fi
+
         if ((is_last)); then
             echo -n "${prefix}└── "
             new_prefix="${prefix}    "
